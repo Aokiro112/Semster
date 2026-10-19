@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model AcademicProfile {
+  id          String   @id @default("default-profile")
+  name        String   @default("Engineering Scholar")
+  degree      String   @default("B.Tech Computer Science & Engineering")
+  institution String   @default("National Institute of Technology")
+  rollNumber  String   @default("24CS1042")
+  targetCgpa  Float    @default(8.5)
+  currentCgpa Float    @default(7.8)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Semester {
+  id           Int               @id // 1 to 8
+  name         String            // "Semester 1", "Semester 2", ...
+  academicYear String            // "2024 - 2025"
+  isCurrent    Boolean           @default(false)
+  startDate    DateTime?
+  endDate      DateTime?
+  sgpa         Float             @default(0.0)
+  credits      Int               @default(0)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  subjects         Subject[]
+  timetableEntries TimetableEntry[]
+  tasks            Task[]
+  assessments      Assessment[]
+  studyGoals       StudyGoal[]
+  notes            Note[]
+}
+
+model Subject {
+  id         String   @id @default(cuid())
+  code       String   // e.g. "MA101"
+  name       String   // e.g. "Engineering Mathematics"
+  credits    Int      @default(4)
+  instructor String?  // e.g. "Dr. Sharma"
+  courseType String   @default("Theory") // Theory, Lab, Practical, Elective
+  color      String   @default("#18181b")
+  semesterId Int
+  semester   Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  modules           Module[]
+  timetableEntries  TimetableEntry[]
+  attendanceRecords AttendanceRecord[]
+  tasks             Task[]
+  labExperiments    LabExperiment[]
+  assessments       Assessment[]
+  studySessions     StudySession[]
+  notes             Note[]
+
+  @@index([semesterId])
+}
+
+model Module {
+  id         String   @id @default(cuid())
+  name       String   // e.g. "Module 1: Matrices"
+  orderIndex Int      @default(0)
+  subjectId  String
+  subject    Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  topics Topic[]
+
+  @@index([subjectId])
+}
+
+model Topic {
+  id         String   @id @default(cuid())
+  title      String   // e.g. "Introduction to Matrices"
+  orderIndex Int      @default(0)
+  status     String   @default("NOT_STARTED") // NOT_STARTED, LEARNING, COMPLETED, NEEDS_REVISION
+  moduleId   String
+  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  revisionItems RevisionItem[]
+
+  @@index([moduleId])
+}
+
+model TimetableEntry {
+  id          String   @id @default(cuid())
+  dayOfWeek   String   // MON, TUE, WED, THU, FRI, SAT
+  startTime   String   // "08:30"
+  endTime     String   // "09:30"
+  room        String?  // "L-101"
+  instructor  String?  // "Dr. Sharma"
+  sessionType String   @default("LECTURE") // LECTURE, LAB, TUTORIAL
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  semesterId  Int
+  semester    Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([subjectId])
+  @@index([semesterId])
+}
+
+model AttendanceRecord {
+  id          String   @id @default(cuid())
+  date        DateTime
+  status      String   // ATTENDED, MISSED, CANCELLED
+  sessionType String   @default("LECTURE") // LECTURE, LAB
+  notes       String?
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([subjectId])
+  @@index([date])
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  priority    String    @default("MEDIUM") // LOW, MEDIUM, HIGH
+  status      String    @default("TODO")   // TODO, IN_PROGRESS, SUBMITTED, COMPLETED
+  taskType    String    @default("ASSIGNMENT") // ASSIGNMENT, LAB_REPORT, QUIZ, PROJECT, STUDY_TASK
+  subjectId   String?
+  subject     Subject?  @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  semesterId  Int
+  semester    Semester  @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([subjectId])
+  @@index([semesterId])
+  @@index([status])
+}
+
+model LabExperiment {
+  id               String   @id @default(cuid())
+  experimentNumber Int
+  title            String
+  aim              String
+  apparatus        String?
+  theory           String?
+  procedure        String?
+  observations     String?
+  calculations     String?
+  result           String?
+  vivaQuestions    String?  // JSON string
+  codeSnippet      String?
+  status           String   @default("COMPLETED") // PENDING, IN_PROGRESS, COMPLETED
+  subjectId        String
+  subject          Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([subjectId])
+}
+
+model Assessment {
+  id             String    @id @default(cuid())
+  title          String    // e.g. "Mid Sem 1 - Mathematics"
+  assessmentType String    // QUIZ, ASSIGNMENT, MID_SEM, LAB_INTERNAL, END_SEM
+  date           DateTime?
+  maxMarks       Float     @default(100)
+  marksObtained  Float?
+  weightage      Float     @default(20) // e.g. 20%
+  subjectId      String
+  subject        Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  semesterId     Int
+  semester       Semester  @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([subjectId])
+  @@index([semesterId])
+}
+
+model StudySession {
+  id              String   @id @default(cuid())
+  durationMinutes Int
+  sessionType     String   @default("DEEP_WORK") // DEEP_WORK, READING, PROBLEM_SOLVING, NOTES, OTHER
+  notes           String?
+  date            DateTime @default(now())
+  subjectId       String?
+  subject         Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([subjectId])
+  @@index([date])
+}
+
+model StudyGoal {
+  id                 String   @id @default(cuid())
+  title              String
+  targetDate         DateTime @default(now())
+  completed          Boolean  @default(false)
+  durationEstMinutes Int?     @default(25)
+  semesterId         Int
+  semester           Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([semesterId])
+}
+
+model RevisionItem {
+  id                 String   @id @default(cuid())
+  topicId            String
+  topic              Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  nextReviewDate     DateTime
+  intervalDays       Int      @default(1)
+  repetitionCount    Int      @default(0)
+  easeFactor         Float    @default(2.5)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([topicId])
+  @@index([nextReviewDate])
+}
+
+model Note {
+  id           String   @id @default(cuid())
+  title        String
+  content      String   // Markdown + LaTeX
+  folder       String   @default("Class Notes") // Class Notes, Formulas, Previous Papers, General
+  tags         String   @default("") // Comma-separated
+  isBookmarked Boolean  @default(false)
+  subjectId    String?
+  subject      Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  semesterId   Int
+  semester     Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([subjectId])
+  @@index([semesterId])
+  @@index([folder])
+}
+
+model AIConversation {
+  id        String      @id @default(cuid())
+  title     String
+  model     String      @default("llama3.1")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  messages  AIMessage[]
+}
+
+model AIMessage {
+  id             String         @id @default(cuid())
+  role           String         // user, assistant, system
+  content        String
+  citations      String?        // JSON string
+  createdAt      DateTime       @default(now())
+  conversationId String
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+model AppSettings {
+  id                         String   @id @default("default-settings")
+  attendanceThreshold        Float    @default(75.0)
+  countCancelledAsConducted  Boolean  @default(false)
+  gradeScheme                String   @default("STANDARD_10_POINT")
+  ollamaUrl                  String   @default("http://localhost:11434")
+  ollamaModel                String   @default("llama3.1:latest")
+  darkMode                   Boolean  @default(false)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+}

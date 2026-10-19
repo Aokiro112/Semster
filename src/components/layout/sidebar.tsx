@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -28,11 +28,17 @@ import { cn } from "@/lib/utils";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { activeSemesterId, setActiveSemesterId, semesters } = useSemester();
+  const [optimisticPath, setOptimisticPath] = useState<string | null>(null);
   const [isPlannerOpen, setIsPlannerOpen] = useState(
     pathname.startsWith("/planner") || pathname === "/"
   );
   const [isSemesterMenuOpen, setIsSemesterMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setOptimisticPath(pathname);
+  }, [pathname]);
 
   const activeSemester = semesters.find((s) => s.id === activeSemesterId) || semesters[0];
 
@@ -59,10 +65,23 @@ export function Sidebar() {
     { label: "Settings", href: "/settings", icon: Settings },
   ];
 
+  const currentPath = optimisticPath || pathname;
   const isActive = (href: string) => {
-    if (href === "/" && pathname === "/") return true;
-    if (href !== "/" && pathname.startsWith(href)) return true;
+    if (href === "/" && currentPath === "/") return true;
+    if (href !== "/" && currentPath.startsWith(href)) return true;
     return false;
+  };
+
+  const handleNavClick = (href: string) => {
+    setOptimisticPath(href);
+  };
+
+  const handleNavHover = (href: string) => {
+    try {
+      router.prefetch(href);
+    } catch {
+      // Ignore prefetch errors in dev
+    }
   };
 
   return (
@@ -91,6 +110,9 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
+                onMouseEnter={() => handleNavHover(item.href)}
+                onPointerDown={() => handleNavClick(item.href)}
+                onClick={() => handleNavClick(item.href)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
                   active
@@ -110,7 +132,7 @@ export function Sidebar() {
               onClick={() => setIsPlannerOpen(!isPlannerOpen)}
               className={cn(
                 "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                pathname.startsWith("/planner")
+                currentPath.startsWith("/planner")
                   ? "text-white"
                   : "text-neutral-400 hover:text-white hover:bg-neutral-900"
               )}
@@ -129,13 +151,16 @@ export function Sidebar() {
             {isPlannerOpen && (
               <div className="pl-6 pr-1 py-1 space-y-1">
                 {plannerSubItems.map((sub) => {
-                  const active = pathname === sub.href;
+                  const active = isActive(sub.href);
                   const SubIcon = sub.icon;
                   return (
                     <Link
                       key={sub.href}
                       href={sub.href}
                       prefetch={true}
+                      onMouseEnter={() => handleNavHover(sub.href)}
+                      onPointerDown={() => handleNavClick(sub.href)}
+                      onClick={() => handleNavClick(sub.href)}
                       className={cn(
                         "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all",
                         active
@@ -160,6 +185,9 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
+                onMouseEnter={() => handleNavHover(item.href)}
+                onPointerDown={() => handleNavClick(item.href)}
+                onClick={() => handleNavClick(item.href)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
                   active

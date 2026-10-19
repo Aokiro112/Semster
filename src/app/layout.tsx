@@ -1,8 +1,10 @@
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import "./globals.css";
 import { SemesterProvider } from "@/context/semester-context";
 import { Sidebar } from "@/components/layout/sidebar";
 import { CommandPalette } from "@/components/layout/command-palette";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -20,6 +22,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground flex antialiased">
         <SemesterProvider>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
           <Sidebar />
           <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
             {children}

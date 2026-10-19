@@ -20,7 +20,7 @@ import {
 import { useSemester } from "@/context/semester-context";
 import { Topbar } from "@/components/layout/topbar";
 import { cn, formatTime, formatDate } from "@/lib/utils";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "@/lib/confetti";
 
 interface DashboardData {
   semester: {
@@ -117,7 +117,7 @@ export default function DashboardPage() {
   }, [activeSemesterId]);
 
   const triggerCelebrate = () => {
-    confetti({
+    triggerConfetti({
       particleCount: 50,
       spread: 60,
       origin: { y: 0.8 },

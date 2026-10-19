@@ -18,7 +18,7 @@ import { useSemester } from "@/context/semester-context";
 import { Topbar } from "@/components/layout/topbar";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "@/lib/confetti";
 
 interface GoalItem {
   id: string;
@@ -71,7 +71,7 @@ export default function StudyPlannerOverviewPage() {
         );
         if (!current) {
           toast.success("Goal completed!");
-          confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 } });
+          triggerConfetti({ particleCount: 30, spread: 50, origin: { y: 0.8 } });
         }
       }
     } catch {

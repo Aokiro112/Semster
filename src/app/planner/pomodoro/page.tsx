@@ -25,7 +25,7 @@ import { Topbar } from "@/components/layout/topbar";
 import { cn } from "@/lib/utils";
 import { playChimeSound } from "@/lib/sound";
 import { toast } from "sonner";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "@/lib/confetti";
 import {
   BarChart,
   Bar,
@@ -139,7 +139,7 @@ export default function PomodoroPage() {
 
   const onTimerComplete = async () => {
     playChimeSound();
-    confetti({
+    triggerConfetti({
       particleCount: 70,
       spread: 70,
       origin: { y: 0.6 },

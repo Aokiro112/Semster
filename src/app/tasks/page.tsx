@@ -19,7 +19,7 @@ import { useSemester } from "@/context/semester-context";
 import { Topbar } from "@/components/layout/topbar";
 import { cn, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "@/lib/confetti";
 
 interface TaskItem {
   id: string;
@@ -109,7 +109,7 @@ export default function TasksPage() {
         );
         if (newStatus === "COMPLETED") {
           toast.success("Task completed!");
-          confetti({ particleCount: 35, spread: 60, origin: { y: 0.8 } });
+          triggerConfetti({ particleCount: 35, spread: 60, origin: { y: 0.8 } });
         } else {
           toast.info(`Status updated to ${newStatus.replace("_", " ")}`);
         }

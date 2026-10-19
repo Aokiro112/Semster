@@ -20,7 +20,7 @@ import { useSemester } from "@/context/semester-context";
 import { Topbar } from "@/components/layout/topbar";
 import { cn, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
-import confetti from "canvas-confetti";
+import { triggerConfetti } from "@/lib/confetti";
 
 interface Topic {
   id: string;
@@ -133,7 +133,7 @@ export default function SubjectsPage() {
 
         if (nextStatus === "COMPLETED") {
           toast.success("Topic marked as completed!");
-          confetti({ particleCount: 25, spread: 45, origin: { y: 0.8 } });
+          triggerConfetti({ particleCount: 25, spread: 45, origin: { y: 0.8 } });
         } else if (nextStatus === "NEEDS_REVISION") {
           toast.info("Topic marked for revision queue");
         }

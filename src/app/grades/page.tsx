@@ -18,7 +18,6 @@ import { Topbar } from "@/components/layout/topbar";
 import { cn, formatDate } from "@/lib/utils";
 import { calculateTargetSGPA } from "@/lib/calculations/gpa";
 import { toast } from "sonner";
-import confetti from "canvas-confetti";
 
 interface AssessmentItem {
   id: string;

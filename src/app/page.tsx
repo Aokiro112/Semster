@@ -189,10 +189,14 @@ export default function DashboardPage() {
           <div className="p-4 rounded-xl border border-border bg-card shadow-sm hover:border-neutral-400 dark:hover:border-neutral-700 transition-colors">
             <div className="text-xs font-medium text-muted-foreground">Current SGPA</div>
             <div className="text-2xl font-bold tracking-tight text-foreground mt-2 font-mono">
-              {data?.metrics?.currentSgpa ? data.metrics.currentSgpa.toFixed(1) : "7.8"}
+              {data?.metrics?.currentSgpa && data.metrics.currentSgpa > 0
+                ? data.metrics.currentSgpa.toFixed(1)
+                : "—"}
             </div>
             <div className="text-[11px] text-muted-foreground mt-1">
-              {activeSemesterId === 1 ? "Semester 1 Score" : `Sem ${activeSemesterId} Estimate`}
+              {data?.metrics?.currentSgpa && data.metrics.currentSgpa > 0
+                ? `Sem ${activeSemesterId} Score`
+                : "Awaiting exam marks"}
             </div>
           </div>
 
@@ -200,9 +204,15 @@ export default function DashboardPage() {
           <div className="p-4 rounded-xl border border-border bg-card shadow-sm hover:border-neutral-400 dark:hover:border-neutral-700 transition-colors">
             <div className="text-xs font-medium text-muted-foreground">Overall CGPA</div>
             <div className="text-2xl font-bold tracking-tight text-foreground mt-2 font-mono">
-              {data?.metrics?.overallCgpa ? data.metrics.overallCgpa.toFixed(1) : "7.8"}
+              {data?.metrics?.overallCgpa && data.metrics.overallCgpa > 0
+                ? data.metrics.overallCgpa.toFixed(1)
+                : "—"}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-1">Cumulative Record</div>
+            <div className="text-[11px] text-muted-foreground mt-1">
+              {data?.metrics?.overallCgpa && data.metrics.overallCgpa > 0
+                ? "Cumulative Record"
+                : "Cumulative graduation"}
+            </div>
           </div>
         </div>
 

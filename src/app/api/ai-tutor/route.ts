@@ -36,64 +36,6 @@ export async function GET() {
       take: 15,
     });
 
-    // If no conversations yet, create default conversations matching the screenshot
-    if (conversations.length === 0) {
-      const defaultConv = await prisma.aIConversation.create({
-        data: {
-          title: "Derivatives Explanation",
-          model: "llama3.1",
-          messages: {
-            create: [
-              {
-                role: "user",
-                content: "Explain chain rule of differentiation with an example.",
-              },
-              {
-                role: "assistant",
-                content: `### Chain Rule
-If $y = f(g(x))$, then:
-$$\\frac{dy}{dx} = f'(g(x)) \\cdot g'(x)$$
-
-It means that if a function is a composition of two functions, you multiply the derivative of the outer function with the derivative of the inner function.
-
-### Example
-Let $y = \\sin(x^2)$.
-Here, $f(u) = \\sin u$ and $g(x) = u = x^2$.
-
-1. Differentiate outer function with respect to inner:
-$$\\frac{df}{du} = \\cos u = \\cos(x^2)$$
-
-2. Differentiate inner function with respect to $x$:
-$$\\frac{du}{dx} = 2x$$
-
-3. Multiply together:
-$$\\frac{dy}{dx} = \\cos(x^2) \\cdot 2x = 2x \\cos(x^2)$$`,
-              },
-            ],
-          },
-        },
-        include: {
-          messages: { orderBy: { createdAt: "asc" } },
-        },
-      });
-
-      // Also create dummy chat titles for sidebar history
-      await prisma.aIConversation.create({
-        data: { title: "Matrix Questions", model: "llama3.1" },
-      });
-      await prisma.aIConversation.create({
-        data: { title: "Physics Numericals", model: "llama3.1" },
-      });
-      await prisma.aIConversation.create({
-        data: { title: "Lab Viva Questions", model: "llama3.1" },
-      });
-
-      conversations = await prisma.aIConversation.findMany({
-        include: { messages: { orderBy: { createdAt: "asc" } } },
-        orderBy: { updatedAt: "desc" },
-      });
-    }
-
     return NextResponse.json({
       ollamaOnline,
       availableModels: availableModels.length > 0 ? availableModels : ["llama3.1:latest", "qwen2.5:latest"],

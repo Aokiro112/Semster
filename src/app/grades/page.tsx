@@ -95,8 +95,8 @@ export default function GradesPage() {
           setSubjectId(data.subjects[0].id);
         }
 
-        const sgpa = data.sgpaResult?.sgpa || 7.8;
-        const cgpa = data.cgpaResult?.cgpa || 7.8;
+        const sgpa = data.sgpaResult?.sgpa || 0.0;
+        const cgpa = data.cgpaResult?.cgpa || 0.0;
         const target = data.profile?.targetCgpa || 8.5;
         setMetrics({ currentSgpa: sgpa, overallCgpa: cgpa, targetCgpa: target });
       }
@@ -190,19 +190,23 @@ export default function GradesPage() {
           <div className="p-4 rounded-xl border border-border bg-card shadow-sm">
             <div className="text-xs font-medium text-muted-foreground">Current SGPA</div>
             <div className="text-3xl font-bold tracking-tight text-foreground mt-2 font-mono">
-              {metrics.currentSgpa.toFixed(1)}
+              {metrics.currentSgpa > 0 ? metrics.currentSgpa.toFixed(1) : "—"}
             </div>
             <div className="text-[11px] text-muted-foreground mt-1">
-              Semester {activeSemesterId} Credit-Weighted Score
+              {metrics.currentSgpa > 0
+                ? `Semester ${activeSemesterId} Credit-Weighted Score`
+                : "No assessments graded yet"}
             </div>
           </div>
 
           <div className="p-4 rounded-xl border border-border bg-card shadow-sm">
             <div className="text-xs font-medium text-muted-foreground">Overall CGPA</div>
             <div className="text-3xl font-bold tracking-tight text-foreground mt-2 font-mono">
-              {metrics.overallCgpa.toFixed(1)}
+              {metrics.overallCgpa > 0 ? metrics.overallCgpa.toFixed(1) : "—"}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-1">Cumulative Across Semesters</div>
+            <div className="text-[11px] text-muted-foreground mt-1">
+              {metrics.overallCgpa > 0 ? "Cumulative Across Semesters" : "Cumulative graduation record"}
+            </div>
           </div>
 
           <div className="p-4 rounded-xl border border-border bg-card shadow-sm">

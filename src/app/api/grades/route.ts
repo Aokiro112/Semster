@@ -72,7 +72,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       profile: {
         targetCgpa: profile?.targetCgpa || 8.5,
-        currentCgpa: cgpaResult.cgpa > 0 ? cgpaResult.cgpa : 7.8,
+        currentCgpa: cgpaResult.cgpa > 0 ? cgpaResult.cgpa : profile?.currentCgpa && profile.currentCgpa > 0 ? profile.currentCgpa : 0.0,
       },
       sgpaResult,
       cgpaResult,

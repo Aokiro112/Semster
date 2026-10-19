@@ -73,7 +73,7 @@ export async function GET(request: Request) {
       targetSessions: 6,
       focusTimeMinutes: totalTodayMinutes,
       breakTimeMinutes: Math.floor(todaySessions.length * 5),
-      streakDays: 3,
+      streakDays: weekSessions.length > 0 ? Math.min(7, Math.ceil(weekSessions.length / 2)) : 0,
       weeklyChartData: orderedChartData,
       todaySessions,
       goals,

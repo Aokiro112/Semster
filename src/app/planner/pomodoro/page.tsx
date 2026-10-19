@@ -56,25 +56,25 @@ export default function PomodoroPage() {
   // Session Context State
   const [subjects, setSubjects] = useState<any[]>([]);
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
-  const [selectedActivity, setSelectedActivity] = useState<string>("Study: Matrices (Module 1)");
+  const [selectedActivity, setSelectedActivity] = useState<string>("");
   const [sessionNote, setSessionNote] = useState<string>("");
   const [selectedTag, setSelectedTag] = useState<SessionTag>("Deep Work");
 
   // Stats State
   const [stats, setStats] = useState({
-    sessionsToday: 2,
+    sessionsToday: 0,
     targetSessions: 6,
-    focusTimeMinutes: 50,
-    breakTimeMinutes: 10,
-    streakDays: 3,
+    focusTimeMinutes: 0,
+    breakTimeMinutes: 0,
+    streakDays: 0,
     weeklyChartData: [
-      { day: "Mon", hours: 1.5 },
-      { day: "Tue", hours: 2.7 },
-      { day: "Wed", hours: 3.5 },
-      { day: "Thu", hours: 2.3 },
-      { day: "Fri", hours: 1.6 },
-      { day: "Sat", hours: 1.6 },
-      { day: "Sun", hours: 1.2 },
+      { day: "Mon", hours: 0 },
+      { day: "Tue", hours: 0 },
+      { day: "Wed", hours: 0 },
+      { day: "Thu", hours: 0 },
+      { day: "Fri", hours: 0 },
+      { day: "Sat", hours: 0 },
+      { day: "Sun", hours: 0 },
     ],
     todaySessions: [] as any[],
   });
@@ -519,61 +519,33 @@ export default function PomodoroPage() {
 
               {/* Today's Tasks & Completed Pomodoro sessions list */}
               <div className="space-y-2.5 text-xs">
-                <div className="flex items-center justify-between p-2 rounded-lg bg-muted/20 border border-border/60">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-foreground flex-shrink-0" />
-                    <div>
-                      <div className="font-semibold text-foreground">
-                        Matrices - Concept Reading
-                      </div>
-                      <div className="text-[10px] text-muted-foreground font-mono">
-                        10:00 AM - 10:25 AM
-                      </div>
-                    </div>
+                {stats.todaySessions.length === 0 ? (
+                  <div className="py-6 text-center text-xs text-muted-foreground border border-dashed border-border rounded-xl p-3">
+                    No focus sessions logged yet today. Click Start above to begin your first session!
                   </div>
-                  <span className="font-mono text-muted-foreground text-[11px]">25 min</span>
-                </div>
-
-                <div className="flex items-center justify-between p-2 rounded-lg bg-muted/20 border border-border/60">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-foreground flex-shrink-0" />
-                    <div>
-                      <div className="font-semibold text-foreground">
-                        Matrices - Practice Questions
+                ) : (
+                  stats.todaySessions.map((s, idx) => (
+                    <div
+                      key={s.id || idx}
+                      className="flex items-center justify-between p-2 rounded-lg bg-muted/20 border border-border/60"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-foreground flex-shrink-0" />
+                        <div>
+                          <div className="font-semibold text-foreground">
+                            {s.notes || s.subject?.name || "Focus Session"}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground font-mono">
+                            {s.sessionType ? s.sessionType.replace("_", " ") : "Deep Work"}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-[10px] text-muted-foreground font-mono">
-                        10:35 AM - 11:00 AM
-                      </div>
+                      <span className="font-mono text-muted-foreground text-[11px]">
+                        {s.durationMinutes} min
+                      </span>
                     </div>
-                  </div>
-                  <span className="font-mono text-muted-foreground text-[11px]">25 min</span>
-                </div>
-
-                <div className="flex items-center justify-between p-2 rounded-lg border border-border/60">
-                  <div className="flex items-center gap-2">
-                    <Play className="w-3.5 h-3.5 text-foreground flex-shrink-0" />
-                    <div>
-                      <div className="font-medium text-foreground">
-                        Differential Calculus - Notes
-                      </div>
-                      <div className="text-[10px] text-muted-foreground font-mono">- Next</div>
-                    </div>
-                  </div>
-                  <span className="font-mono text-muted-foreground text-[11px]">25 min</span>
-                </div>
-
-                <div className="flex items-center justify-between p-2 rounded-lg border border-border/60">
-                  <div className="flex items-center gap-2">
-                    <Circle className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    <div>
-                      <div className="font-medium text-foreground">
-                        Differential Calculus - PYQs
-                      </div>
-                      <div className="text-[10px] text-muted-foreground font-mono">- - -</div>
-                    </div>
-                  </div>
-                  <span className="font-mono text-muted-foreground text-[11px]">25 min</span>
-                </div>
+                  ))
+                )}
               </div>
             </div>
 

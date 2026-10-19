@@ -87,8 +87,8 @@ export async function GET(request: Request) {
     });
 
     const sgpaCalc = calculateSGPA(subjectCreditGrades);
-    const displaySgpa = semester?.sgpa && semester.sgpa > 0 ? semester.sgpa : sgpaCalc.sgpa || 7.8;
-    const displayCgpa = cgpaCalc.cgpa > 0 ? cgpaCalc.cgpa : profile.currentCgpa || 7.8;
+    const displaySgpa = semester?.sgpa && semester.sgpa > 0 ? semester.sgpa : sgpaCalc.sgpa > 0 ? sgpaCalc.sgpa : 0.0;
+    const displayCgpa = cgpaCalc.cgpa > 0 ? cgpaCalc.cgpa : profile.currentCgpa > 0 ? profile.currentCgpa : 0.0;
 
     // 7. Today's Classes
     // Map current JS day (0=SUN, 1=MON, etc.) to 3-letter code

@@ -35,23 +35,24 @@ interface SemesterContextType {
 }
 
 const defaultProfile: ProfileInfo = {
-  name: "Alex Mercer",
-  degree: "B.Tech Computer Science & Engineering",
-  institution: "National Institute of Technology",
-  rollNumber: "24CS1042",
+  name: "Student",
+  degree: "Engineering Degree",
+  institution: "My University / College",
+  rollNumber: "",
   targetCgpa: 8.5,
-  currentCgpa: 7.8,
+  currentCgpa: 0.0,
 };
 
+const currentYear = new Date().getFullYear();
 const defaultSemesters: SemesterInfo[] = [
-  { id: 1, name: "Semester 1", academicYear: "2024 - 2025", isCurrent: true, sgpa: 7.8, credits: 20 },
-  { id: 2, name: "Semester 2", academicYear: "2024 - 2025", isCurrent: false, sgpa: 8.1, credits: 21 },
-  { id: 3, name: "Semester 3", academicYear: "2025 - 2026", isCurrent: false, sgpa: 0.0, credits: 22 },
-  { id: 4, name: "Semester 4", academicYear: "2025 - 2026", isCurrent: false, sgpa: 0.0, credits: 22 },
-  { id: 5, name: "Semester 5", academicYear: "2026 - 2027", isCurrent: false, sgpa: 0.0, credits: 20 },
-  { id: 6, name: "Semester 6", academicYear: "2026 - 2027", isCurrent: false, sgpa: 0.0, credits: 20 },
-  { id: 7, name: "Semester 7", academicYear: "2027 - 2028", isCurrent: false, sgpa: 0.0, credits: 18 },
-  { id: 8, name: "Semester 8", academicYear: "2027 - 2028", isCurrent: false, sgpa: 0.0, credits: 16 },
+  { id: 1, name: "Semester 1", academicYear: `${currentYear} - ${currentYear + 1}`, isCurrent: true, sgpa: 0.0, credits: 0 },
+  { id: 2, name: "Semester 2", academicYear: `${currentYear} - ${currentYear + 1}`, isCurrent: false, sgpa: 0.0, credits: 0 },
+  { id: 3, name: "Semester 3", academicYear: `${currentYear + 1} - ${currentYear + 2}`, isCurrent: false, sgpa: 0.0, credits: 0 },
+  { id: 4, name: "Semester 4", academicYear: `${currentYear + 1} - ${currentYear + 2}`, isCurrent: false, sgpa: 0.0, credits: 0 },
+  { id: 5, name: "Semester 5", academicYear: `${currentYear + 2} - ${currentYear + 3}`, isCurrent: false, sgpa: 0.0, credits: 0 },
+  { id: 6, name: "Semester 6", academicYear: `${currentYear + 2} - ${currentYear + 3}`, isCurrent: false, sgpa: 0.0, credits: 0 },
+  { id: 7, name: "Semester 7", academicYear: `${currentYear + 3} - ${currentYear + 4}`, isCurrent: false, sgpa: 0.0, credits: 0 },
+  { id: 8, name: "Semester 8", academicYear: `${currentYear + 3} - ${currentYear + 4}`, isCurrent: false, sgpa: 0.0, credits: 0 },
 ];
 
 const SemesterContext = createContext<SemesterContextType | undefined>(undefined);
